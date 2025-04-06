@@ -39,14 +39,14 @@ def get_avg_sector_times(year, gp_name):
 
 def load_qualifying_data():
     df = pd.DataFrame({
-        "Driver": ["Max Verstappen", "Lando Norris", "Oscar Piastri", "Charles Leclerc",
-                   "George Russell", "Kimi Antonelli", "Isack Hadjar", "Lewis Hamilton",
-                   "Alexander Albon", "Oliver Bearman", "Pierre Gasly", "Fernando Alonso",
-                   "Liam Lawson", "Yuki Tsunoda", "Carlos Sainz", "Nico Hulkenberg",
-                   "Gabriel Bortoleto", "Esteban Ocon", "Jack Doohan", "Lance Stroll"],
-        "QualifyingTime (s)": [86.983, 86.995, 87.027, 87.299, 87.318, 87.555, 87.610, 87.615,
-                               87.867, 87.822, 87.836, 87.987, 87.906, 88.000, 87.836, 88.570,
-                               88.622, 88.696, 88.877, 89.271],
+        "Driver": ["Oscar Piastri", "George Russell", "Lando Norris", "Max Verstappen", "Lewis Hamilton",
+                   "Charles Leclerc", "Isack Hadjar", "Andrea Kimi Antonelli", "Yuki Tsunoda", "Alexander Albon",
+                   "Esteban Ocon", "Nico Hülkenberg", "Fernando Alonso", "Lance Stroll", "Carlos Sainz Jr.",
+                   "Pierre Gasly", "Oliver Bearman", "Jack Doohan", "Gabriel Bortoleto", "Liam Lawson"],
+        "QualifyingTime (s)": [90.641, 90.723, 90.793, 90.817, 90.927,
+                               91.021, 91.079, 91.103, 91.638, 91.706,
+                               91.625, 91.632, 91.688, 91.773, 91.840,
+                               91.992, 92.018, 92.092, 92.141, 92.174]
     })
     df["DriverCode"] = df["Driver"].map(driver_mapping)
     return df
@@ -70,7 +70,7 @@ def prepare_features(qual_df, wet_df, sector_df):
     X = merged[["QualifyingTime (s)", "WetPerformanceScore", "Sector1Time (s)", "Sector2Time (s)", "Sector3Time (s)"]]
     return X, merged
 
-#Weighting Logic
+# === 🔧 Weighting Logic ===
 def apply_manual_weights(X_df, weights_dict):
     X_weighted = X_df.copy()
     for col, weight in weights_dict.items():
@@ -101,17 +101,17 @@ if __name__ == "__main__":
     japan_qual = load_qualifying_data()
 
     print("Getting sector times from Japan 2024...")
-    sector_times = get_avg_sector_times(2024, "Japan")
+    sector_times = get_avg_sector_times(2024, "China")
 
     print("Preparing feature matrix...")
     X_all, merged_all = prepare_features(japan_qual, wet_scores, sector_times)
 
     print("Loading Japan 2024 race times as labels...")
-    y_source = get_avg_laptimes(2024, "Japan")
+    y_source = get_avg_laptimes(2024, "China")
     full_merged = pd.merge(merged_all, y_source, how="left", left_on="DriverCode", right_on="Driver")
     full_merged.dropna(subset=["AvgLapTime_2024"], inplace=True)
 
-    # Feature Weights
+    # === Feature Weights ===
     weights = {
         "QualifyingTime (s)": 1.2,
         "WetPerformanceScore": 1.0,
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         "Sector3Time (s)": 0.2,
     }
 
-    print("Applying feature weights...")
+    print("⚖Applying feature weights...")
     X_final = apply_manual_weights(
         full_merged[["QualifyingTime (s)", "WetPerformanceScore", "Sector1Time (s)", "Sector2Time (s)", "Sector3Time (s)"]],
         weights
