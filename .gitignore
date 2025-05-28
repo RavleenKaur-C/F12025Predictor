@@ -2,3 +2,5 @@ f1_cache/
 .venv/
 __pycache__/
 *.pyc
+.env
+
