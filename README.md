@@ -1,7 +1,5 @@
 # F12025Predictor
 
-Inspired by mar-antaya
-
 A machine learning model to predict Formula 1 Grand Prix finishing order using qualifying times, historical wet/dry performance, clean air race pace etc.
 
 ---
@@ -27,3 +25,7 @@ You can apply this predictor to **any upcoming Grand Prix**, given a qualifying 
 - Works with FastF1 caching to minimize network calls and support offline runs
 
 ---
+
+## Credit
+
+- inspired by mar-antaya
